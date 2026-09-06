@@ -1,73 +1,66 @@
-# React + TypeScript + Vite
+# Gabriel Bartholomay — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page developer portfolio built from a Figma design with **React 19 + Vite +
+TypeScript**, styled with **Emotion**, and documented in **Storybook**.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Command                  | What it does                                        |
+| ------------------------ | -------------------------------------------------- |
+| `npm run dev`            | Vite dev server (the site)                          |
+| `npm run build`          | Type-check (`tsc -b`) then production build         |
+| `npm run preview`        | Serve the production build locally                  |
+| `npm run storybook`      | Storybook dev server on port 6006                   |
+| `npm run build-storybook`| Static Storybook build                             |
+| `npm run lint`           | ESLint                                              |
 
-## React Compiler
+## Project layout
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  theme/
+    tokens.ts          Design tokens (colours, spacing, type…) — lifted from the
+                       Figma variables. The single source of truth.
+    GlobalStyles.tsx   Inter font, reset, dark page background (Emotion <Global>).
+  content/
+    site.ts            All page copy & data in one editable place.
+  components/
+    <Name>/            One folder per component, four files each (see below).
+    index.ts           Barrel export for the whole library.
+  App.tsx              Assembles the sections into the page. Deliberately thin.
+  main.tsx             React entry point.
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Component convention
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Every custom component lives in its own folder with **four files**:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| File                 | Purpose                                                              |
+| -------------------- | ------------------------------------------------------------------- |
+| `<Name>.tsx`         | The component. JSX + behaviour only — no inline styles.             |
+| `<Name>Styles.ts`    | Emotion `styled` parts. All visual CSS lives here.                  |
+| `<Name>.types.ts`    | Props and data types.                                              |
+| `<Name>.stories.tsx` | Storybook stories.                                                 |
+
+> Note on extensions: the component and stories files carry `.tsx` (not `.ts`)
+> because they contain JSX, which TypeScript only allows in `.tsx` files. Styles
+> and types are pure `.ts`.
+
+### The library
+
+**Primitives** — `Icon`, `GradientText`, `Button`, `Tag`, `SectionHeading`,
+`Section`, `CheckItem`, `SkillBar`
+
+**Composed** — `ProjectCard`, `JobCard`, `SkillMatrix`
+
+**Page sections** — `NavBar`, `Hero`, `PortfolioSection`, `SkillsSection`,
+`ExperienceSection`, `ContactCTA`, `SiteFooter`
+
+Each has a Storybook entry under **Primitives / Components / Sections**.
+
+## Editing content
+
+Open `src/content/site.ts`. Everything the page shows — bio, projects, skills,
+jobs, contact links — is a plain object there. `App.tsx` just wires those objects
+into the section components. The résumé bullet points and skill percentages are
+placeholders carried over from the design; swap them for real content.

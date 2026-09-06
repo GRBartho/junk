@@ -1,20 +1,33 @@
-import type { Preview } from '@storybook/react-vite'
+import type { Preview } from '@storybook/react-vite';
+import { createElement } from 'react';
+import { GlobalStyles } from '../src/theme/GlobalStyles';
 
+/**
+ * Global Storybook configuration.
+ *
+ *  - `decorators`  : inject the app's <GlobalStyles> (Inter font, reset, dark
+ *                    body) so every component renders exactly as it does in the
+ *                    real app.
+ *  - `a11y`        : surface accessibility violations in the test UI.
+ *
+ * The dark page background comes from <GlobalStyles> (`body { background }`),
+ * which applies inside the story iframe just like in the app.
+ */
 const preview: Preview = {
+  decorators: [
+    (Story) => createElement('div', null, createElement(GlobalStyles), createElement(Story)),
+  ],
   parameters: {
+    layout: 'fullscreen',
     controls: {
       matchers: {
-       color: /(background|color)$/i,
-       date: /Date$/i,
+        color: /(background|color)$/i,
+        date: /Date$/i,
       },
     },
-
     a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: 'todo'
-    }
+      test: 'todo',
+    },
   },
 };
 
